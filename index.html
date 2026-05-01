@@ -830,6 +830,138 @@
   .rw-card:hover .rw-view { gap: 10px; }
   @media (max-width: 700px) { .rw-grid { grid-template-columns: 1fr; } }
 
+
+  /* ── FUNNEL VIEWER MODAL ── */
+  #funnel-viewer {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: #000;
+    flex-direction: column;
+  }
+  #funnel-viewer.open { display: flex; }
+  .fv-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    gap: 12px;
+  }
+  .fv-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold);
+    color: #080c10;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+    text-decoration: none;
+  }
+  .fv-home:hover { opacity: 0.85; }
+  .fv-title {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
+  }
+  .fv-actions { display: flex; gap: 8px; align-items: center; }
+  .fv-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.82rem;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .fv-btn:hover { border-color: var(--gold-glow); color: var(--gold); }
+  .fv-close {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 1rem;
+    width: 34px; height: 34px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .fv-close:hover { border-color: var(--gold-glow); color: var(--gold); }
+  #funnel-frame {
+    flex: 1;
+    border: none;
+    width: 100%;
+    background: #fff;
+  }
+
+  /* ── MOBILE OPTIMIZATIONS ── */
+  @media (max-width: 768px) {
+    nav { padding: 14px 4%; }
+    .nav-logo { font-size: 1rem; }
+    #hero { padding: 100px 4% 60px; }
+    h1 { font-size: 2.1rem; letter-spacing: -0.01em; }
+    .hero-sub { font-size: 0.95rem; }
+    .hero-actions { flex-direction: column; gap: 12px; }
+    .btn-primary, .btn-outline { width: 100%; text-align: center; padding: 14px 20px; }
+    .stats-inner { grid-template-columns: 1fr 1fr; gap: 0; }
+    .stat-item { padding: 20px 10px; }
+    .stat-num { font-size: 1.7rem; }
+    .services-grid, .automation-grid, .funnels-grid, .tools-grid { grid-template-columns: 1fr; gap: 14px; }
+    .rw-grid { grid-template-columns: 1fr; gap: 20px; }
+    .wa-grid { grid-template-columns: 1fr; gap: 32px; }
+    .resume-grid { grid-template-columns: 1fr; gap: 28px; }
+    .flow-track { flex-direction: column; gap: 0; }
+    .flow-step { min-width: unset; }
+    .flow-step:not(:last-child)::after { content: '↓'; right: auto; bottom: -18px; top: auto; left: 50%; transform: translateX(-50%); }
+    .flow-step + .flow-step { margin-left: 0; margin-top: 20px; }
+    section { padding: 70px 0; }
+    #services, #automation, #funnels, #tools, #workflow, #workflow-automation, #real-workflows, #resume { padding: 70px 0; }
+    .section-title { font-size: 1.75rem; }
+    .section-sub { font-size: 0.9rem; margin-bottom: 36px; }
+    .wa-right { position: static; }
+    .rw-screenshot { height: 170px; }
+    .hero-photo-wrap { width: 180px; height: 180px; }
+    .hero-photo { width: 180px; height: 180px; }
+    .exp-header { flex-direction: column; gap: 6px; }
+    .fv-title { display: none; }
+    .fv-bar { padding: 8px 12px; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+    .cta-inner h2 { font-size: 1.8rem; }
+  }
+  @media (max-width: 480px) {
+    h1 { font-size: 1.75rem; }
+    .hero-split { gap: 24px; }
+    .funnel-card { padding: 20px; }
+    .service-card, .auto-card, .tool-card { padding: 22px; }
+    .stat-num { font-size: 1.5rem; }
+    .fv-btn span { display: none; }
+  }
+
 </style>
 </head>
 <body>
@@ -1252,42 +1384,42 @@
     <h2 class="section-title reveal">Funnels I've Built</h2>
     <p class="section-sub reveal">Real funnel systems designed to capture leads, nurture prospects, and convert visitors into customers. Click any to view the live demo.</p>
     <div class="funnels-grid">
-      <a href="https://protect.dperalta.uk/home-page-133365" target="_blank" class="funnel-card reveal">
+      <div class="funnel-card reveal" onclick="openFunnel('https://protect.dperalta.uk/home-page-133365','Insurance Lead Generation Funnel')">
         <div class="funnel-emoji">🛡️</div>
         <h3>Insurance Lead Generation Funnel</h3>
         <p>Designed to capture insurance inquiries and convert prospects into qualified leads.</p>
         <div class="funnel-link">View Live Demo →</div>
-      </a>
-      <a href="https://deehomes.dperalta.uk/home-page-769588" target="_blank" class="funnel-card reveal reveal-delay-1">
+      </div>
+      <div class="funnel-card reveal reveal-delay-1" onclick="openFunnel('https://deehomes.dperalta.uk/home-page-769588','Real Estate Property Inquiry Funnel')">
         <div class="funnel-emoji">🏡</div>
         <h3>Real Estate Property Inquiry Funnel</h3>
         <p>Optimized for property inquiries, capturing buyer interest and booking consultations.</p>
         <div class="funnel-link">View Live Demo →</div>
-      </a>
-      <a href="https://athena-aesthetics.dperalta.uk/landing-page-page" target="_blank" class="funnel-card reveal reveal-delay-2">
+      </div>
+      <div class="funnel-card reveal reveal-delay-2" onclick="openFunnel('https://athena-aesthetics.dperalta.uk/landing-page-page','Medical Clinic Appointment Funnel')">
         <div class="funnel-emoji">💉</div>
         <h3>Medical Clinic Appointment Funnel</h3>
         <p>Built to attract patients and automate appointment scheduling for clinics.</p>
         <div class="funnel-link">View Live Demo →</div>
-      </a>
-      <a href="https://webraiders.dperalta.uk/home-660256" target="_blank" class="funnel-card reveal reveal-delay-3">
+      </div>
+      <div class="funnel-card reveal reveal-delay-3" onclick="openFunnel('https://webraiders.dperalta.uk/home-660256','Salon & Barbershop Funnel')">
         <div class="funnel-emoji">💈</div>
         <h3>Salon & Barbershop Funnel</h3>
         <p>Promotional funnel designed to increase bookings for barbershops and salons.</p>
         <div class="funnel-link">View Live Demo →</div>
-      </a>
-      <a href="https://weoutdoor.dperalta.uk/lead-magnet-inbound-funnel-main-page-9189" target="_blank" class="funnel-card reveal reveal-delay-4">
+      </div>
+      <div class="funnel-card reveal reveal-delay-4" onclick="openFunnel('https://weoutdoor.dperalta.uk/lead-magnet-inbound-funnel-main-page-9189','E-Commerce Lead Magnet Funnel')">
         <div class="funnel-emoji">🛒</div>
         <h3>E-Commerce Lead Magnet Funnel</h3>
         <p>Lead generation funnel used to grow email lists and drive product sales.</p>
         <div class="funnel-link">View Live Demo →</div>
-      </a>
-      <a href="https://homepro.dperalta.uk/estimate" target="_blank" class="funnel-card reveal reveal-delay-5">
+      </div>
+      <div class="funnel-card reveal reveal-delay-5" onclick="openFunnel('https://homepro.dperalta.uk/estimate','Home Renovation Estimate Funnel')">
         <div class="funnel-emoji">🔨</div>
         <h3>Home Renovation Estimate Funnel</h3>
         <p>Built for contractors to generate renovation leads and estimate requests.</p>
         <div class="funnel-link">View Live Demo →</div>
-      </a>
+      </div>
     </div>
   </div>
 </section>
@@ -1477,5 +1609,36 @@
   }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
   revealEls.forEach(el => observer.observe(el));
 </script>
+
+<!-- FUNNEL VIEWER -->
+<div id="funnel-viewer">
+  <div class="fv-bar">
+    <a href="https://portfolio.dperalta.uk" class="fv-home">← Home</a>
+    <div class="fv-title" id="fv-title">Funnel Demo</div>
+    <div class="fv-actions">
+      <a id="fv-open-link" href="#" target="_blank" class="fv-btn">↗ <span>Open in New Tab</span></a>
+      <button class="fv-close" onclick="closeFunnel()">✕</button>
+    </div>
+  </div>
+  <iframe id="funnel-frame" src="" title="Funnel Demo" allowfullscreen></iframe>
+</div>
+
+<script>
+  function openFunnel(url, title) {
+    document.getElementById('funnel-frame').src = url;
+    document.getElementById('fv-title').textContent = title;
+    document.getElementById('fv-open-link').href = url;
+    document.getElementById('funnel-viewer').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeFunnel() {
+    document.getElementById('funnel-viewer').classList.remove('open');
+    document.getElementById('funnel-frame').src = '';
+    document.body.style.overflow = '';
+  }
+  // ESC key closes viewer
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFunnel(); });
+</script>
+
 </body>
 </html>
