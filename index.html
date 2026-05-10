@@ -1916,18 +1916,18 @@
 <style>
 /* === CHATBOT WIDGET === */
 #dp-chat-wrap *{box-sizing:border-box;margin:0;padding:0}
-#dp-chat-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+#dp-chat-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;align-items:flex-end;gap:10px;pointer-events:none}
 
 /* Hint bubble */
-#dp-hint{background:#0f1419;border:1px solid rgba(201,168,76,0.4);border-radius:14px 14px 2px 14px;padding:10px 15px;font-size:13px;color:#e8eaed;max-width:210px;text-align:right;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:opacity .4s}
+#dp-hint{background:#0f1419;border:1px solid rgba(201,168,76,0.4);border-radius:14px 14px 2px 14px;padding:10px 15px;font-size:13px;color:#e8eaed;max-width:210px;text-align:right;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:opacity .4s;pointer-events:auto}
 #dp-hint b{color:#c9a84c}
 
 /* Toggle button */
-#dp-toggle{width:56px;height:56px;border-radius:50%;background:#c9a84c;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 24px rgba(201,168,76,0.45);transition:transform .2s,box-shadow .2s;flex-shrink:0}
+#dp-toggle{width:56px;height:56px;border-radius:50%;background:#c9a84c;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 24px rgba(201,168,76,0.45);transition:transform .2s,box-shadow .2s;flex-shrink:0;pointer-events:auto}
 #dp-toggle:hover{transform:scale(1.08);box-shadow:0 6px 32px rgba(201,168,76,0.6)}
 
 /* Chat panel */
-#dp-panel{width:360px;height:520px;background:#0f1419;border:1px solid rgba(255,255,255,0.08);border-radius:18px;display:none;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,0.6);overflow:hidden;transform-origin:bottom right;animation:dpIn .22s cubic-bezier(.4,0,.2,1)}
+#dp-panel{position:fixed;bottom:90px;right:24px;width:360px;max-height:520px;background:#0f1419;border:1px solid rgba(255,255,255,0.08);border-radius:18px;display:none;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,0.6);overflow:hidden;transform-origin:bottom right;animation:dpIn .22s cubic-bezier(.4,0,.2,1);z-index:9998}
 #dp-panel.dp-open{display:flex}
 @keyframes dpIn{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
 
@@ -1980,7 +1980,7 @@
 
 /* Mobile */
 @media(max-width:480px){
-  #dp-panel{width:calc(100vw - 28px);height:75vh;right:0;border-radius:16px}
+  #dp-panel{width:calc(100vw - 28px);height:72vh;right:14px;bottom:90px;border-radius:16px}
   #dp-chat-wrap{right:14px;bottom:16px}
 }
 </style>
@@ -1990,7 +1990,7 @@
   <button id="dp-toggle" onclick="dpToggle()" title="Chat with Derrick's AI">🤖</button>
 </div>
 
-<div id="dp-panel">
+<div id="dp-panel" style="display:none">
   <div id="dp-head">
     <div id="dp-head-avatar">🤖</div>
     <div id="dp-head-info">
@@ -2023,7 +2023,7 @@
 (function(){
   // ── CONFIG ──
   const WEBHOOK = 'YOUR_CLOUDFLARE_WORKER_URL'; // replace after deploying worker
-  const API_KEY = 'YOUR_ANTHROPIC_API_KEY'; // temporary — replace with worker URL later
+  const API_KEY = 'YOUR_ANTHROPIC_API_KEY'; // ← PASTE YOUR KEY FROM console.anthropic.com
 
   const SYSTEM = `You are Derrick Peralta's personal AI portfolio assistant. Speak in first person as Derrick. Be friendly, confident, and concise — 2-4 sentences max unless listing URLs. Never invent information.
 
@@ -2143,7 +2143,10 @@ RULES:
       dpAddMsg('bot', reply);
     } catch(e){
       dpRemoveTyping();
-      dpAddMsg('bot',"Connection issue — please email derrickperalta78@gmail.com directly!");
+      const msg = API_KEY === 'YOUR_ANTHROPIC_API_KEY'
+        ? "The AI assistant needs an API key to work. For now, reach out directly at derrickperalta78@gmail.com!"
+        : "Connection issue — please email derrickperalta78@gmail.com directly!";
+      dpAddMsg('bot', msg);
     }
     send.disabled=false;
     document.getElementById('dp-input').focus();
